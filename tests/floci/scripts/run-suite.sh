@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # FILE: run-suite.sh
 # DESCRIPTION: Apply + destroy one Floci OpenTofu suite against a running emulator.
-# VERSION: 0.1.0
+# VERSION: 0.2.0
 set -euo pipefail
 
 SUITE="${1:-}"
@@ -23,16 +23,19 @@ fi
 
 command -v "${TOFU_BIN}" >/dev/null || { echo "ERROR: ${TOFU_BIN} not on PATH" >&2; exit 1; }
 
-WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/floci-${SUITE}.XXXXXX")"
-cleanup() { rm -rf "${WORKDIR}"; }
+# Link shared provider/versions into the suite dir so module sources stay relative.
+ln -sfn "${SHARED_DIR}/provider.tf" "${SUITE_DIR}/provider.tf"
+ln -sfn "${SHARED_DIR}/versions.tf" "${SUITE_DIR}/versions.tf"
+
+cleanup() {
+  rm -f "${SUITE_DIR}/provider.tf" "${SUITE_DIR}/versions.tf"
+  rm -rf "${SUITE_DIR}/.terraform" "${SUITE_DIR}/.terraform.lock.hcl" "${SUITE_DIR}/terraform.tfstate" "${SUITE_DIR}/terraform.tfstate.backup" 2>/dev/null || true
+}
 trap cleanup EXIT
 
-cp "${SHARED_DIR}/versions.tf" "${SHARED_DIR}/provider.tf" "${WORKDIR}/"
-cp "${SUITE_DIR}/"*.tf "${WORKDIR}/"
-
-echo "::group::floci suite=${SUITE} endpoint=${FLOCI_ENDPOINT} workdir=${WORKDIR}"
+echo "::group::floci suite=${SUITE} endpoint=${FLOCI_ENDPOINT}"
 (
-  cd "${WORKDIR}"
+  cd "${SUITE_DIR}"
   export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-test}"
   export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-test}"
   export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-us-east-1}"
