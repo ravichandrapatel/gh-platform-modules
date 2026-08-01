@@ -14,23 +14,29 @@ This repo is the **IaC layer**: versioned modules only. It does not orchestrate 
 ## Layout
 
 ```text
-modules/<name>/     # reusable OpenTofu modules
-examples/<name>/    # root modules for CI / local validate
-docs/               # branching + GitHub rulesets
+<module-name>/     # OpenTofu modules at repo root (e.g. s3/, vpc/)
+examples/          # optional examples (not released as modules)
+docs/              # branching, rulesets, release docs
 ```
+
+## Module release (SemVer)
+
+Per-module tags and releases are automated by
+[techpivot/terraform-module-releaser](https://github.com/techpivot/terraform-module-releaser)
+on pull requests to `main`.
+
+See [docs/MODULE_RELEASE.md](docs/MODULE_RELEASE.md) (includes Wiki one-time setup).
+
+Tag format: `{module}/vX.Y.Z` (example: `s3/v1.0.0`).
 
 ## Security branching
 
-See [docs/BRANCHING.md](docs/BRANCHING.md). Apply [docs/GITHUB_RULESETS.md](docs/GITHUB_RULESETS.md) after the GitHub remote exists.
+See [docs/BRANCHING.md](docs/BRANCHING.md). Ruleset: [docs/GITHUB_RULESETS.md](docs/GITHUB_RULESETS.md).
 
 ## Consume
 
-Pin an annotated tag from a consumer:
-
 ```hcl
-module "bucket" {
-  source = "git::https://github.com/OWNER/gh-platform-modules.git//modules/s3-bucket?ref=v0.1.0"
+module "s3" {
+  source = "git::https://github.com/ravichandrapatel/gh-platform-modules.git//s3?ref=s3/v1.0.0"
 }
 ```
-
-Replace `OWNER` with your GitHub org.
