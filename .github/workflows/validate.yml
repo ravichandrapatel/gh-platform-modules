@@ -1,3 +1,8 @@
+# FILE: validate.yml
+# DESCRIPTION: OpenTofu fmt/validate for changed (or all) modules on PRs to main.
+# VERSION: 0.2.0
+# AUTHORS: gh-platform
+
 name: validate
 
 on:
@@ -21,14 +26,34 @@ jobs:
         with:
           tofu_version: 1.8.8
 
-      - name: Format check
+      - name: Format check (repo)
         run: |
           set -euo pipefail
           tofu fmt -check -recursive
 
-      - name: Init and validate example
-        working-directory: examples/s3-bucket
+      - name: Validate each module directory
         run: |
           set -euo pipefail
-          tofu init -backend=false
-          tofu validate
+          # Module = directory at repo root containing .tf files (exclude meta dirs)
+          shopt -s nullglob
+          failed=0
+          for dir in */; do
+            name="${dir%/}"
+            case "${name}" in
+              examples|modules|docs|.github) continue ;;
+            esac
+            if ! compgen -G "${name}/*.tf" > /dev/null; then
+              continue
+            fi
+            echo "::group::validate ${name}"
+            (
+              cd "${name}"
+              tofu init -backend=false -input=false
+              tofu validate
+            ) || failed=1
+            echo "::endgroup::"
+          done
+          if [[ "${failed}" -ne 0 ]]; then
+            echo "::error::one or more modules failed validate"
+            exit 1
+          fi
