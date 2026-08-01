@@ -45,6 +45,6 @@ jobs:
             .gitignore,*.md,docs/**,examples/**,*.tftest.hcl,tests/**
           tag-directory-separator: /
           use-version-prefix: true
-          # Re-enable after creating Wiki → Home page once in the GitHub UI.
-          disable-wiki: true
+          # Wiki Home page initialized; releaser maintains module wiki pages.
+          disable-wiki: false
           hide-no-changes-pr-comment: true
