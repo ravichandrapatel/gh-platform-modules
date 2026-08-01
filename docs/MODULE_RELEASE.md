@@ -37,7 +37,7 @@ module "s3" {
 
 ## Ignored paths
 
-`examples/`, `modules/` (legacy scaffold), and `docs/` are excluded from module discovery.
+Per-module `**/examples/**`, `docs/`, and `tests/` are excluded from module discovery.
 
 ## Related
 
