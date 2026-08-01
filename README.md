@@ -29,6 +29,12 @@ See [docs/MODULE_RELEASE.md](docs/MODULE_RELEASE.md) (includes Wiki one-time set
 
 Tag format: `{module}/vX.Y.Z` (example: `s3/v1.0.0`).
 
+## Floci testing
+
+Selected modules are integration-tested with OpenTofu against
+[Floci](https://floci.io/) (local AWS emulator). See [docs/FLOCI_TESTING.md](docs/FLOCI_TESTING.md)
+and [`tests/floci/`](tests/floci/).
+
 ## Security branching
 
 See [docs/BRANCHING.md](docs/BRANCHING.md). Ruleset: [docs/GITHUB_RULESETS.md](docs/GITHUB_RULESETS.md).

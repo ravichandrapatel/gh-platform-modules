@@ -1,0 +1,95 @@
+# FILE: floci-test.yml
+# DESCRIPTION: OpenTofu apply/destroy selected modules against Floci AWS emulator.
+# VERSION: 0.1.0
+# AUTHORS: gh-platform
+
+name: floci-test
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "tests/floci/**"
+      - "s3/**"
+      - "sns-topic/**"
+      - "secrets-manager/**"
+      - "cloudwatch-logs/**"
+      - "ecr/**"
+      - ".github/workflows/floci-test.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tests/floci/**"
+      - "s3/**"
+      - "sns-topic/**"
+      - "secrets-manager/**"
+      - "cloudwatch-logs/**"
+      - "ecr/**"
+      - ".github/workflows/floci-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: floci-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  floci:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [s3, sns-topic, secrets-manager, cloudwatch-logs, ecr]
+    env:
+      FLOCI_ENDPOINT: http://127.0.0.1:4566
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_REGION: us-east-1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Start Floci
+        run: |
+          set -euo pipefail
+          docker run -d --name floci \
+            -p 4566:4566 \
+            -e LOCALSTACK_PARITY=true \
+            floci/floci:1.5.34@sha256:b3b3a70a294b8ba8095385b8571ea1e4d44d494950d98de5e812cd9de02f506b
+
+      - name: Wait for Floci health
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            if curl -fsS "${FLOCI_ENDPOINT}/_localstack/health" >/tmp/floci-health.json; then
+              echo "Floci healthy"
+              cat /tmp/floci-health.json
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::Floci did not become healthy"
+          docker logs floci || true
+          exit 1
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
+        with:
+          tofu_version: 1.10.10
+
+      - name: Run Floci suite
+        env:
+          SUITE: ${{ matrix.suite }}
+        run: |
+          set -euo pipefail
+          chmod +x tests/floci/scripts/run-suite.sh
+          ./tests/floci/scripts/run-suite.sh "${SUITE}"
+
+      - name: Floci logs on failure
+        if: failure()
+        run: |
+          set -euo pipefail
+          docker logs floci || true

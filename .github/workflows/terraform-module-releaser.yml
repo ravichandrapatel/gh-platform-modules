@@ -38,7 +38,9 @@ jobs:
             modules,
             modules/**,
             docs,
-            docs/**
+            docs/**,
+            tests,
+            tests/**
           module-change-exclude-patterns: >-
             .gitignore,*.md,docs/**,examples/**,*.tftest.hcl,tests/**
           module-asset-exclude-patterns: >-
