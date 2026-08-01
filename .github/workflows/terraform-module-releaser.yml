@@ -29,10 +29,12 @@ jobs:
           semver-mode: conventional-commits
           default-semver-level: patch
           default-first-tag: v1.0.0
-          # Flat module dirs at repo root; ignore scaffold/docs/examples.
+          # Flat module dirs at repo root; ignore scaffold/docs/examples (incl. nested).
           module-path-ignore: >-
             examples,
             examples/**,
+            **/examples,
+            **/examples/**,
             modules,
             modules/**,
             docs,
@@ -43,6 +45,6 @@ jobs:
             .gitignore,*.md,docs/**,examples/**,*.tftest.hcl,tests/**
           tag-directory-separator: /
           use-version-prefix: true
-          # Wiki requires Settings → Features → Wikis + an initial Home page.
-          disable-wiki: false
+          # Re-enable after creating Wiki → Home page once in the GitHub UI.
+          disable-wiki: true
           hide-no-changes-pr-comment: true

@@ -4,9 +4,11 @@
 
 ## One-time setup
 
-1. Repo **Settings → Features → Wikis** → enable.
-2. Open the **Wiki** tab → create an initial **Home** page (required; GitHub has no API for this).
-3. Ensure branch ruleset on `main` allows GitHub Actions to create tags/releases (contents write via `GITHUB_TOKEN`).
+1. Repo **Settings → Features → Wikis** → enable (already on for this repo).
+2. Open the **Wiki** tab → **Create the first page** titled `Home` and save.  
+   Until that exists, the wiki git remote 404s and the releaser fails if wiki is enabled.  
+   Current workflow sets `disable-wiki: true` until Home exists — then flip it to `false`.
+3. Ensure branch ruleset on `main` allows GitHub Actions to create tags/releases (`contents: write` via `GITHUB_TOKEN`).
 
 ## How it works
 
