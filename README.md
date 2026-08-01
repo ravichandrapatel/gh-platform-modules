@@ -14,9 +14,10 @@ This repo is the **IaC layer**: versioned modules only. It does not orchestrate 
 ## Layout
 
 ```text
-<module-name>/     # OpenTofu modules at repo root (e.g. s3/, vpc/)
-examples/          # optional examples (not released as modules)
-docs/              # branching, rulesets, release docs
+<module-name>/              # OpenTofu modules at repo root (e.g. s3/, vpc/)
+  examples/                 # per-module usage examples (not released)
+docs/                       # branching, rulesets, release docs
+tests/                      # integration harnesses (e.g. Floci)
 ```
 
 ## Module release (SemVer)
