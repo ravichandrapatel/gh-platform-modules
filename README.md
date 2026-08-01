@@ -1,15 +1,16 @@
 # gh-platform-modules
 
-OpenTofu / AWS module library for **gh-platform**.
+**IaC module library** for gh-platform: versioned OpenTofu modules for AWS (and related) resources.
 
-This repo is the **IaC layer**: versioned modules only. It does not orchestrate cloud applies.
+This repo ships **building blocks only** (e.g. `s3/`, `vpc/`). It does not run applies, IssueOps, or CI deploy orchestration — callers compose modules from workload stacks or codegen templates.
 
 ## Related repos
 
-| Repo | Role |
+| Repo | What it does |
 | --- | --- |
-| `gh-platform-actions` | Commons + deploy actions / reusable workflows |
-| `gh-platform-control` | Control plane (dispatch, pins, OIDC, environments) |
+| [`gh-platform-actions`](https://github.com/ravichandrapatel/gh-platform-actions) | Reusable `tofu-pipeline` + Conftest policies for callers |
+| [`gh-platform-control`](https://github.com/ravichandrapatel/gh-platform-control) | IssueOps control plane (forms, codegen, env registry) |
+| Workload repos (`infra-dev` / `infra-prod`) | Own stacks that source these modules by tag |
 
 ## Layout
 
