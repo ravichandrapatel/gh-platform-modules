@@ -3,9 +3,8 @@ provider "aws" {
 }
 
 module "bucket" {
-  source = "../../modules/s3-bucket"
+  source = "../../s3"
 
-  bucket_name   = var.bucket_name
-  force_destroy = var.force_destroy
-  tags          = var.tags
+  bucket_name = var.bucket_name
+  tags        = var.tags
 }
