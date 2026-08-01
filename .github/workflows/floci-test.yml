@@ -14,7 +14,6 @@ on:
       - "sns-topic/**"
       - "secrets-manager/**"
       - "cloudwatch-logs/**"
-      - "ecr/**"
       - ".github/workflows/floci-test.yml"
   push:
     branches: [main]
@@ -24,7 +23,6 @@ on:
       - "sns-topic/**"
       - "secrets-manager/**"
       - "cloudwatch-logs/**"
-      - "ecr/**"
       - ".github/workflows/floci-test.yml"
   workflow_dispatch:
 
@@ -41,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [s3, sns-topic, secrets-manager, cloudwatch-logs, ecr]
+        suite: [s3, sns-topic, secrets-manager, cloudwatch-logs]
     env:
       FLOCI_ENDPOINT: http://127.0.0.1:4566
       AWS_ACCESS_KEY_ID: test

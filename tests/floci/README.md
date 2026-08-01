@@ -11,7 +11,7 @@ Integration tests that `tofu apply` / `tofu destroy` selected modules against
 | `sns-topic` | `sns-topic/` |
 | `secrets-manager` | `secrets-manager/` |
 | `cloudwatch-logs` | `cloudwatch-logs/` |
-| `ecr` | `ecr/` |
+| `ecr` | `ecr/` (suite present; not in CI matrix yet — Floci ECR apply hung in GHA) |
 
 VPC/ALB/RDS/Orgs modules are out of scope until Floci coverage is proven for them.
 
